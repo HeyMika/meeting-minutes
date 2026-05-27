@@ -2,12 +2,14 @@
     <h1>
         <img src="docs/Meetily-6.png" style="border-radius: 10px;" />
         <br>
-        Meetily (HeyMika Fork)
+        Meetily (Advanced Model Edition)
         <br>
         Privacy-First AI Meeting Assistant
     </h1>
     <p align="center">
-        <b>This is a fork of <a href="https://github.com/Zackriya-Solutions/meeting-minutes">Zackriya-Solutions/meeting-minutes</a> featuring advanced model integrations and stability improvements.</b>
+        <b>This is a specialized version of Meetily featuring advanced model integrations and stability improvements.</b>
+        <br>
+        <i>⚠️ Currently, only the macOS version has been fully tested and verified.</i>
     </p>
     <a href="https://trendshift.io/repositories/13272" target="_blank"><img src="https://trendshift.io/api/badge/repositories/13272" alt="Zackriya-Solutions%2Fmeeting-minutes | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
     <br>
@@ -98,9 +100,9 @@ Whether you're a defense consultant, enterprise executive, legal professional, o
 
 </details>
 
-## New Features (HeyMika Fork)
+## New Advanced Features
 
-This fork introduces high-performance model integrations and quality-of-life improvements:
+This version introduces high-performance model integrations and quality-of-life improvements:
 
 - **🚀 Mega-ASR Foundation Model:** Integrated the [xzf-thu/Mega-ASR](https://github.com/xzf-thu/Mega-ASR) foundation model (1.7B). Specifically designed for "in-the-wild" robustness against noise, echo, and poor acoustics.
 - **💎 Gemma 4 (Pro) Summaries:** Added support for Google's latest **Gemma 4 4B** model for offline summaries, featuring a massive **64K context window**.
