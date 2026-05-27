@@ -6,6 +6,7 @@ FastAPI backend for meeting transcription and analysis with **Docker distributio
 - [⚠️ Important Notes](#️-important-notes)
 - [🚀 Quick Start](#-quick-start)
 - [🐳 Docker Deployment (Recommended)](#-docker-deployment-recommended)
+- [🔥 Mega-ASR Integration](#-mega-asr-integration)
 - [💻 Native Development](#-native-development)
 - [🔧 Manual Installation](#-manual-installation)
 - [📚 API Documentation](#-api-documentation)
@@ -68,6 +69,32 @@ start_with_output.ps1
 **After startup, access:**
 - **Whisper Server**: http://localhost:8178
 - **Meeting App**: http://localhost:5167 (with API docs at `/docs`)
+
+---
+
+## 🔥 Mega-ASR Integration
+
+Meetily supports **Mega-ASR**, a foundation ASR model for robust real-world recordings. Since Mega-ASR requires a full Python environment and PyTorch, it is integrated via this Python backend.
+
+### Setup Instructions
+1.  **Clone Mega-ASR**:
+    ```bash
+    cd backend/app
+    git clone https://github.com/xzf-thu/Mega-ASR.git mega_asr
+    ```
+2.  **Install Dependencies**:
+    Ensure you have `torch`, `transformers`, and the Mega-ASR requirements installed in your environment:
+    ```bash
+    pip install -r mega_asr/requirements.txt
+    ```
+3.  **Start the Backend**:
+    Run the Python backend:
+    ```bash
+    cd backend/app
+    python main.py
+    ```
+4.  **Select in Meetily**:
+    In the Meetily app settings under "Transcription Model", select **Mega-ASR (Local Python Backend)**. Audio will now be automatically routed to your local Python server for processing.
 
 ---
 

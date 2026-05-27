@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { ModelConfig, ModelSettingsModal } from '@/components/ModelSettingsModal';
 import { Switch } from './ui/switch';
 import { useConfig } from '@/contexts/ConfigContext';
+import { TemplateManager } from './TemplateManager';
 
 interface SummaryModelSettingsProps {
   refetchTrigger?: number; // Change this to trigger refetch
@@ -145,6 +146,8 @@ export function SummaryModelSettings({ refetchTrigger }: SummaryModelSettingsPro
           onSave={handleSaveModelConfig}
           skipInitialFetch={true}
         />
+
+        <TemplateManager />
       </div>
     </div>
   );

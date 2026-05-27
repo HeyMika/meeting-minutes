@@ -135,6 +135,11 @@ pub async fn validate_transcription_model_ready<R: Runtime>(app: &AppHandle<R>) 
                 }
             }
         }
+        "megaAsr" => {
+            info!("🔍 Validating Mega-ASR (Local Python Backend)...");
+            // In the future, we could add a health check to localhost:8000 here
+            Ok(())
+        }
         other => {
             warn!("❌ Unsupported transcription provider for local recording: {}", other);
             Err(format!(
@@ -211,6 +216,10 @@ pub async fn get_or_init_transcription_engine<R: Runtime>(
                     Err("Parakeet engine not initialized. This should not happen after validation.".to_string())
                 }
             }
+        }
+        "megaAsr" => {
+            info!("🚀 Initializing Mega-ASR transcription engine (Python Backend)");
+            Ok(TranscriptionEngine::Provider(Arc::new(super::mega_asr_provider::MegaAsrProvider::new(app.clone()))))
         }
         "localWhisper" | _ => {
             info!("🎤 Initializing Whisper transcription engine");

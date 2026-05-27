@@ -22,9 +22,23 @@ pub fn set_bundled_templates_dir(path: PathBuf) {
 /// - macOS: ~/Library/Application Support/Meetily/templates/
 /// - Windows: %APPDATA%\Meetily\templates\
 /// - Linux: ~/.config/Meetily/templates/
-fn get_custom_templates_dir() -> Option<PathBuf> {
+pub fn get_custom_templates_dir() -> Option<PathBuf> {
     let mut path = dirs::data_dir()?;
-    path.push("Meetily");
+    
+    // Check for 'meetily' (lowercase) which is the default from tauri.conf.json productName
+    let lowercase_path = path.join("meetily/templates");
+    if lowercase_path.exists() {
+        return Some(lowercase_path);
+    }
+    
+    // Check for 'Meetily' (capitalized) as fallback
+    let capitalized_path = path.join("Meetily/templates");
+    if capitalized_path.exists() {
+        return Some(capitalized_path);
+    }
+
+    // Default to lowercase for new installations
+    path.push("meetily");
     path.push("templates");
     Some(path)
 }

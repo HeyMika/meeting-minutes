@@ -2,8 +2,13 @@
     <h1>
         <img src="docs/Meetily-6.png" style="border-radius: 10px;" />
         <br>
+        Meetily (HeyMika Fork)
+        <br>
         Privacy-First AI Meeting Assistant
     </h1>
+    <p align="center">
+        <b>This is a fork of <a href="https://github.com/Zackriya-Solutions/meeting-minutes">Zackriya-Solutions/meeting-minutes</a> featuring advanced model integrations and stability improvements.</b>
+    </p>
     <a href="https://trendshift.io/repositories/13272" target="_blank"><img src="https://trendshift.io/api/badge/repositories/13272" alt="Zackriya-Solutions%2Fmeeting-minutes | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
     <br>
     <br>
@@ -53,6 +58,7 @@ A privacy-first AI meeting assistant that captures, transcribes, and summarizes 
 
 - [Introduction](#introduction)
 - [Why Meetily?](#why-meetily)
+- [New Features (HeyMika Fork)](#new-features-heymika-fork)
 - [Features](#features)
 - [Installation](#installation)
 - [Key Features in Action](#key-features-in-action)
@@ -92,12 +98,23 @@ Whether you're a defense consultant, enterprise executive, legal professional, o
 
 </details>
 
+## New Features (HeyMika Fork)
+
+This fork introduces high-performance model integrations and quality-of-life improvements:
+
+- **🚀 Mega-ASR Foundation Model:** Integrated the [xzf-thu/Mega-ASR](https://github.com/xzf-thu/Mega-ASR) foundation model (1.7B). Specifically designed for "in-the-wild" robustness against noise, echo, and poor acoustics.
+- **💎 Gemma 4 (Pro) Summaries:** Added support for Google's latest **Gemma 4 4B** model for offline summaries, featuring a massive **64K context window**.
+- **📂 Permanent Summary Templates:** Custom templates are now stored in the system's `Application Support` directory, ensuring they survive all application updates and builds.
+- **🛠️ Managed Python Sidecar:** The app now automatically manages an isolated Python virtual environment for heavy AI inference, providing a seamless "all-in-one" desktop experience.
+- **🧹 Hallucination Breaker:** Advanced N-gram deduplication and comma-loop filtering for Mega-ASR to ensure clean, professional transcripts.
+
 ## Features
 
 - **Local First:** All processing is done on your machine. No data ever leaves your computer.
 - **Real-time Transcription:** Get a live transcript of your meeting as it happens.
 - **AI-Powered Summaries:** Generate summaries of your meetings using powerful language models.
 - **Multi-Platform:** Works on macOS, Windows, and Linux.
+- **Persistent Templates:** Import and manage custom summary structures that stay with you across app versions.
 - **Open Source:** Meetily is open source and free to use.
 - **Flexible AI Provider Support:** Choose from Ollama (local), Claude, Groq, OpenRouter, or use your own OpenAI-compatible endpoint.
 

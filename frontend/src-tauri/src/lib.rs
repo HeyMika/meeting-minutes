@@ -392,6 +392,7 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
@@ -639,6 +640,8 @@ pub fn run() {
             summary::api_list_templates,
             summary::api_get_template_details,
             summary::api_validate_template,
+            summary::api_open_templates_folder,
+            summary::api_import_template,
             // Built-in AI commands
             summary::summary_engine::builtin_ai_list_models,
             summary::summary_engine::builtin_ai_get_model_info,

@@ -69,9 +69,9 @@ pub fn get_available_models() -> Vec<ModelDef> {
         ModelDef {
             name: "gemma3:1b".to_string(),
             display_name: "Gemma 3 1B (Fast)".to_string(),
-            gguf_file: "gemma-3-1b-it-Q8_0.gguf".to_string(),
+            gguf_file: "google_gemma-3-1b-it-Q8_0.gguf".to_string(),
             template: "gemma3".to_string(),
-            download_url: "https://meetily.towardsgeneralintelligence.com/models/gemma-3-1b-it-Q8_0.gguf".to_string(),
+            download_url: "https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF/resolve/main/google_gemma-3-1b-it-Q8_0.gguf".to_string(),
             size_mb: 1019,
             context_size: 32768, 
             layer_count: 26,     
@@ -86,9 +86,9 @@ pub fn get_available_models() -> Vec<ModelDef> {
         ModelDef {
             name: "gemma3:4b".to_string(),
             display_name: "Gemma 3 4B (Balanced)".to_string(),
-            gguf_file: "gemma-3-4b-it-Q4_K_M.gguf".to_string(),
+            gguf_file: "google_gemma-3-4b-it-Q4_K_M.gguf".to_string(),
             template: "gemma3".to_string(),
-            download_url: "https://meetily.towardsgeneralintelligence.com/models/gemma-3-4b-it-Q4_K_M.gguf".to_string(),
+            download_url: "https://huggingface.co/ggml-org/gemma-3-4b-it-GGUF/resolve/main/google_gemma-3-4b-it-Q4_K_M.gguf".to_string(),
             size_mb: 2374,
             context_size: 32768, // Supports 128k, but 32k is good for local·
             layer_count: 35,
@@ -99,6 +99,23 @@ pub fn get_available_models() -> Vec<ModelDef> {
                 stop_tokens: vec!["<end_of_turn>".to_string()],
             },
             description: "Balanced model. Great quality/speed trade-off. Requires ~3.5GB RAM.".to_string(),
+        },
+        ModelDef {
+            name: "gemma4:e4b".to_string(),
+            display_name: "Gemma 4 4B (Pro)".to_string(),
+            gguf_file: "gemma-4-E4B-it-Q4_K_M.gguf".to_string(),
+            template: "gemma3".to_string(), // Assuming same template as Gemma 3 for now
+            download_url: "https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF/resolve/main/gemma-4-E4B-it-Q4_K_M.gguf".to_string(),
+            size_mb: 5100,
+            context_size: 65536, // Upgraded context
+            layer_count: 42,
+            sampling: SamplingParams {
+                temperature: 0.8,
+                top_k: 40,
+                top_p: 0.9,
+                stop_tokens: vec!["<end_of_turn>".to_string()],
+            },
+            description: "Pro model (Early Access). Higher accuracy and larger context window. Requires ~4GB RAM.".to_string(),
         },
     ]
 }

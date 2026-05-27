@@ -8,7 +8,7 @@ export interface RawModelInfo {
 }
 
 export interface ModelOption {
-  provider: 'whisper' | 'parakeet';
+  provider: 'whisper' | 'parakeet' | 'megaAsr';
   name: string;
   displayName: string;
   size_mb: number;
@@ -20,7 +20,7 @@ interface TranscriptModelConfig {
 }
 
 /**
- * Custom hook for fetching and managing transcription models (Whisper and Parakeet).
+ * Custom hook for fetching and managing transcription models (Whisper, Parakeet, and Mega-ASR).
  *
  * This hook centralizes the model fetching logic that was previously duplicated
  * in ImportAudioDialog and RetranscribeDialog components.
@@ -77,6 +77,14 @@ export function useTranscriptionModels(transcriptModelConfig: TranscriptModelCon
       console.error('Failed to fetch Parakeet models:', err);
     }
 
+    // Add Mega-ASR model
+    allModels.push({
+      provider: 'megaAsr' as const,
+      name: 'mega-asr-v1',
+      displayName: '🚀 Mega-ASR: foundation-v1 (1.7B)',
+      size_mb: 3400, // Approximate size of 1.7B model
+    });
+
     setAvailableModels(allModels);
 
     // Set default model based on user's saved configuration
@@ -88,7 +96,8 @@ export function useTranscriptionModels(transcriptModelConfig: TranscriptModelCon
     const configuredMatch = allModels.find(
       (m) =>
         (configuredProvider === 'localWhisper' && m.provider === 'whisper' && m.name === configuredModel) ||
-        (configuredProvider === 'parakeet' && m.provider === 'parakeet' && m.name === configuredModel)
+        (configuredProvider === 'parakeet' && m.provider === 'parakeet' && m.name === configuredModel) ||
+        (configuredProvider === 'megaAsr' && m.provider === 'megaAsr' && m.name === configuredModel)
     );
 
     // Only set default model if user hasn't manually selected one

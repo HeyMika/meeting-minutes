@@ -4,6 +4,7 @@ use crate::audio::decoder::decode_audio_file;
 use crate::audio::vad::get_speech_chunks_with_progress;
 use super::common::{create_transcript_segments, split_segment_at_silence, write_transcripts_json};
 use super::constants::AUDIO_EXTENSIONS;
+use super::transcription::{MegaAsrProvider, TranscriptionProvider};
 use crate::config::{DEFAULT_WHISPER_MODEL, DEFAULT_PARAKEET_MODEL};
 use crate::parakeet_engine::ParakeetEngine;
 use crate::state::AppState;
@@ -299,13 +300,18 @@ async fn run_retranscription<R: Runtime>(
     emit_progress(&app, &meeting_id, "transcribing", 25, "Loading transcription engine...");
 
     // Initialize the appropriate engine once (not per-segment)
-    let whisper_engine = if !use_parakeet {
+    let whisper_engine = if provider.as_deref() != Some("parakeet") && provider.as_deref() != Some("megaAsr") {
         Some(get_or_init_whisper(&app, model.as_deref()).await?)
     } else {
         None
     };
-    let parakeet_engine = if use_parakeet {
+    let parakeet_engine = if provider.as_deref() == Some("parakeet") {
         Some(get_or_init_parakeet(&app, model.as_deref()).await?)
+    } else {
+        None
+    };
+    let mega_asr_provider = if provider.as_deref() == Some("megaAsr") {
+        Some(MegaAsrProvider::new(app.clone()))
     } else {
         None
     };
@@ -368,7 +374,14 @@ async fn run_retranscription<R: Runtime>(
         }
 
         // Transcribe this segment
-        let (text, conf) = if use_parakeet {
+        let (text, conf) = if provider.as_deref() == Some("megaAsr") {
+            let provider = mega_asr_provider.as_ref().unwrap();
+            let result = provider
+                .transcribe(segment.samples.clone(), language.clone())
+                .await
+                .map_err(|e| anyhow!("Mega-ASR transcription failed on segment {}: {}", i, e))?;
+            (result.text, 0.95f32)
+        } else if use_parakeet {
             let engine = parakeet_engine.as_ref().unwrap();
             let text = engine
                 .transcribe_audio(segment.samples.clone())

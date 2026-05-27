@@ -95,7 +95,12 @@
             "icons/app_icon.ico"
         ],
         "resources": [
-            "templates/*.json"
+            "templates/*.json",
+            "../../backend/app/*.py",
+            "../../backend/app/mega_asr_repo/src/**/*",
+            "../../backend/app/mega_asr_repo/ckpt/**/*",
+            "../../backend/requirements.txt",
+            "../../backend/.venv/**/*"
         ],
         "externalBin": [
             "binaries/llama-helper",

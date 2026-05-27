@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { RefreshCw, Globe, Loader2, AlertCircle, CheckCircle2, X, Cpu } from 'lucide-react';
+import { RefreshCw, Globe, Loader2, AlertCircle, CheckCircle2, X, Cpu, ChevronDown, ChevronRight, Terminal } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -63,6 +63,16 @@ export function RetranscribeDialog({
   const [progress, setProgress] = useState<RetranscriptionProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedLang, setSelectedLang] = useState(selectedLanguage || 'auto');
+  const [logs, setLogs] = useState<string[]>([]);
+  const [showLogs, setShowLogs] = useState(false);
+  const logEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll logs
+  useEffect(() => {
+    if (showLogs && logEndRef.current) {
+      logEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [logs, showLogs]);
 
   // Use centralized model fetching hook
   const {
@@ -111,6 +121,8 @@ export function RetranscribeDialog({
       setIsProcessing(false);
       setProgress(null);
       setError(null);
+      setLogs([]);
+      setShowLogs(false);
       setSelectedLang(selectedLanguage || 'auto');
 
       // Fetch available models using centralized hook
@@ -132,6 +144,8 @@ export function RetranscribeDialog({
         (event) => {
           if (event.payload.meeting_id === meetingId) {
             setProgress(event.payload);
+            // Also add major progress steps to logs
+            setLogs(prev => [...prev, `[PROG] ${event.payload.message}`]);
           }
         }
       );
@@ -140,6 +154,19 @@ export function RetranscribeDialog({
         return;
       }
       unlisteners.push(unlistenProgress);
+
+      // Backend logs
+      const unlistenLogs = await listen<string>(
+        'backend-log',
+        (event) => {
+          setLogs(prev => [...prev, `[LOG] ${event.payload}`]);
+        }
+      );
+      if (cleanedUpRef.current) {
+        unlistenLogs();
+        return;
+      }
+      unlisteners.push(unlistenLogs);
 
       // Completion event
       const unlistenComplete = await listen<RetranscriptionResult>(
@@ -385,6 +412,34 @@ export function RetranscribeDialog({
               <p className="text-sm text-red-800">{error}</p>
             </div>
           )}
+
+          {/* Expandable Log View */}
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setShowLogs(!showLogs)}
+              className="w-full flex items-center justify-between p-2 bg-gray-50 hover:bg-gray-100 transition-colors text-xs font-medium text-gray-600"
+            >
+              <div className="flex items-center gap-2">
+                <Terminal className="h-3 w-3" />
+                <span>Process Logs</span>
+              </div>
+              {showLogs ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+            </button>
+            {showLogs && (
+              <div className="bg-black p-3 h-40 overflow-y-auto font-mono text-[10px] text-green-400">
+                {logs.length === 0 ? (
+                  <p className="text-gray-500 italic">No logs yet...</p>
+                ) : (
+                  logs.map((log, i) => (
+                    <div key={i} className="mb-1 break-all leading-tight border-l border-green-900/30 pl-2 text-left">
+                      {log}
+                    </div>
+                  ))
+                )}
+                <div ref={logEndRef} />
+              </div>
+            )}
+          </div>
         </div>
 
         <DialogFooter>

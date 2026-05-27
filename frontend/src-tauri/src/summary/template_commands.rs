@@ -2,6 +2,7 @@ use crate::summary::templates;
 use serde::{Deserialize, Serialize};
 use tauri::Runtime;
 use tracing::{info, warn};
+use std::path::PathBuf;
 
 /// Template metadata for UI display
 #[derive(Debug, Serialize, Deserialize)]
@@ -121,6 +122,99 @@ pub async fn api_validate_template<R: Runtime>(
             Err(e)
         }
     }
+}
+
+/// Opens the custom templates folder in the system file manager
+#[tauri::command]
+pub async fn api_open_templates_folder<R: Runtime>(
+    _app: tauri::AppHandle<R>,
+) -> Result<(), String> {
+    info!("api_open_templates_folder called");
+    
+    let custom_dir = templates::get_custom_templates_dir()
+        .ok_or_else(|| "Could not determine custom templates directory".to_string())?;
+
+    // Create directory if it doesn't exist
+    if !custom_dir.exists() {
+        std::fs::create_dir_all(&custom_dir)
+            .map_err(|e| format!("Failed to create templates directory: {}", e))?;
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        std::process::Command::new("open")
+            .arg(&custom_dir)
+            .spawn()
+            .map_err(|e| format!("Failed to open folder: {}", e))?;
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        std::process::Command::new("explorer")
+            .arg(&custom_dir)
+            .spawn()
+            .map_err(|e| format!("Failed to open folder: {}", e))?;
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        std::process::Command::new("xdg-open")
+            .arg(&custom_dir)
+            .spawn()
+            .map_err(|e| format!("Failed to open folder: {}", e))?;
+    }
+
+    Ok(())
+}
+
+/// Imports a template from a file path
+#[tauri::command]
+pub async fn api_import_template<R: Runtime>(
+    _app: tauri::AppHandle<R>,
+    file_path: String,
+) -> Result<TemplateInfo, String> {
+    info!("api_import_template called with path: {}", file_path);
+    
+    let src_path = PathBuf::from(file_path);
+    if !src_path.exists() {
+        return Err("Source file does not exist".to_string());
+    }
+
+    // Read and validate the template first
+    let content = std::fs::read_to_string(&src_path)
+        .map_err(|e| format!("Failed to read source file: {}", e))?;
+    
+    let template = templates::validate_and_parse_template(&content)?;
+    
+    // Determine destination path
+    let custom_dir = templates::get_custom_templates_dir()
+        .ok_or_else(|| "Could not determine custom templates directory".to_string())?;
+    
+    if !custom_dir.exists() {
+        std::fs::create_dir_all(&custom_dir)
+            .map_err(|e| format!("Failed to create templates directory: {}", e))?;
+    }
+
+    let file_name = src_path.file_name()
+        .ok_or_else(|| "Invalid source filename".to_string())?;
+    let dest_path = custom_dir.join(file_name);
+
+    // Copy file
+    std::fs::copy(&src_path, &dest_path)
+        .map_err(|e| format!("Failed to copy template: {}", e))?;
+
+    info!("Template imported successfully to {:?}", dest_path);
+    
+    let id = dest_path.file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("unknown")
+        .to_string();
+
+    Ok(TemplateInfo {
+        id,
+        name: template.name,
+        description: template.description,
+    })
 }
 
 #[cfg(test)]

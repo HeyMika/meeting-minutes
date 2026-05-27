@@ -22,4 +22,5 @@ export const MODEL_DEFAULTS = {
   whisper: DEFAULT_WHISPER_MODEL,
   localWhisper: DEFAULT_WHISPER_MODEL,
   parakeet: DEFAULT_PARAKEET_MODEL,
+  megaAsr: 'mega-asr-v1',
 } as const;
